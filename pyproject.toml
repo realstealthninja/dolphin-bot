@@ -9,8 +9,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 disnake = "^2.9.1"
-SQLAlchemy = "^2.0.27"
 disnake-jishaku = "^2.6.5"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.27"}
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.1"

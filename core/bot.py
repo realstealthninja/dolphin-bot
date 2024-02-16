@@ -7,6 +7,8 @@ from .constants import (
         BOT_TOKEN
 )
 
+# db
+from sqlalchemy import Column
 
 # disnake
 from disnake.ext.commands import Bot
@@ -25,8 +27,10 @@ class DolphinBot(Bot):
             intents=Intents.all(),
             case_insensitive=True,
             help_command=None,
+            owner_ids=[521226389559443461, 298043305927639041],
         )
         self.COGS: list = list()
+        self.seasonal = None
 
         for file in os.listdir("./cogs/"):
             if not file.startswith("_"):
