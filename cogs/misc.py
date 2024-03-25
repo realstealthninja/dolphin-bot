@@ -1,4 +1,3 @@
-
 import disnake
 from disnake.ext import commands
 
@@ -11,7 +10,11 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx: commands.Context):
-        return await ctx.reply(embed=disnake.Embed(title=f"�{round(self.bot.latency * 1000)} ms", description=""))
+        return await ctx.reply(
+            embed=disnake.Embed(
+                title=f"�{round(self.bot.latency * 1000)} ms", description=""
+            )
+        )
 
 
 def setup(bot: DolphinBot):

@@ -1,4 +1,3 @@
-
 from core import DolphinBot
 
 if __name__ == "__main__":

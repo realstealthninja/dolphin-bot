@@ -3,21 +3,16 @@ import os
 import asyncio
 
 # constants
-from .constants import (
-        BOT_TOKEN
-)
+from .constants import BOT_TOKEN
 
 # db
 from sqlalchemy import Column
+from sqlalchemy.ext.asyncio import create_async_engine
 
 # disnake
 from disnake.ext.commands import Bot
 from disnake.ext.tasks import loop
-from disnake import (
-     Intents,
-     Activity,
-     ActivityType
-)
+from disnake import Intents, Activity, ActivityType
 
 
 class DolphinBot(Bot):
@@ -31,6 +26,7 @@ class DolphinBot(Bot):
         )
         self.COGS: list = list()
         self.seasonal = None
+        self.loop.create_task(self.connect_engines())
 
         for file in os.listdir("./cogs/"):
             if not file.startswith("_"):
@@ -42,23 +38,28 @@ class DolphinBot(Bot):
         for file in self.COGS:
             if file.endswith("py"):
                 self.load_extension(f"{file[:-3]}")
+            else:
+                self.load_extension(file)
         self.load_extension("jishaku")
 
     @loop(seconds=540)
     async def update_presence(self) -> None:
         await self.change_presence(
-                activity=Activity(
-                    type=ActivityType.listening,
-                    name="JustADolphin",
-                )
+            activity=Activity(
+                type=ActivityType.listening,
+                name="JustADolphin",
+            )
         )
         await asyncio.sleep(180)
         await self.change_presence(
-            activity=Activity(
-                type=ActivityType.watching,
-                name="for db/"
-            )
+            activity=Activity(type=ActivityType.watching, name="for db/")
         )
+
+    async def connect_engines(self):
+        self.seasonal = create_async_engine(
+            "sqlite+aiosqlite:///db/seasonal.db", echo=True
+        )
+        print("connected engine")
 
     async def on_ready(self) -> None:
         self.update_presence.start()
@@ -66,5 +67,3 @@ class DolphinBot(Bot):
     def run(self) -> None:
         self.setup()
         super().run(BOT_TOKEN, reconnect=True)
-
-
