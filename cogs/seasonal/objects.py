@@ -7,6 +7,8 @@ class Base(AsyncAttrs, DeclarativeBase):
 
 
 class Points(Base):
+    __tablename__ = "points"
+
     id: Mapped[int] = mapped_column(primary_key=True)
     userid: Mapped[int]
     month: Mapped[int]
@@ -14,11 +16,14 @@ class Points(Base):
 
 
 class Configs(Base):
+    __tablename__ = "configs"
+
     id: Mapped[int] = mapped_column(primary_key=True)
     channel: Mapped[int]
 
-
 class Events(Base):
+    __tablename__ = "events"
+
     id: Mapped[int] = mapped_column(primary_key=True)
     duration: Mapped[int]
     messageId: Mapped[int]

@@ -15,7 +15,7 @@ class Seasonal(commands.Cog):
 
     async def cog_load(self):
         async with self.bot.seasonal.begin() as connection:
-            await connection.run_sync(Base.metadata.createall)
+            await connection.run_sync(Base.metadata.create_all)
     
 
     @commands.slash_command()

@@ -24,7 +24,6 @@ class event_modal(Modal):
 
         super().__init__(
             title="Create an Event",
-            custom_tag="create_event",
             components=components,
         )
 
