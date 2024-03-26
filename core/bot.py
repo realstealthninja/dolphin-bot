@@ -1,19 +1,31 @@
-# sys
+#sys
 import os
 import asyncio
+from datetime import datetime
+
 
 # constants
 from .constants import BOT_TOKEN
 
+from .constants import SPOTIFY_TOKEN
+from .constants import SPOTIFY_ID
+
+# spotify
+import spotify
+
+
 # db
-from sqlalchemy import Column
 from sqlalchemy.ext.asyncio import create_async_engine
 
 # disnake
+import disnake
 from disnake.ext.commands import Bot
+from disnake.ext import commands
 from disnake.ext.tasks import loop
 from disnake import Intents, Activity, ActivityType
 
+command_sync_flags = commands.CommandSyncFlags.default()
+command_sync_flags.sync_commands_debug = True
 
 class DolphinBot(Bot):
     def __init__(self):
@@ -22,6 +34,7 @@ class DolphinBot(Bot):
             intents=Intents.all(),
             case_insensitive=True,
             help_command=None,
+            command_sync_flags=command_sync_flags,
             owner_ids=[521226389559443461, 298043305927639041],
         )
         self.COGS: list = list()
@@ -44,16 +57,19 @@ class DolphinBot(Bot):
 
     @loop(seconds=540)
     async def update_presence(self) -> None:
-        await self.change_presence(
-            activity=Activity(
-                type=ActivityType.listening,
-                name="JustADolphin",
-            )
-        )
-        await asyncio.sleep(180)
-        await self.change_presence(
-            activity=Activity(type=ActivityType.watching, name="for db/")
-        )
+        async with spotify.Client(SPOTIFY_ID, SPOTIFY_TOKEN) as r:
+            aeji = await r.get_artist("4J45U4EhxTBWKNe28ASAaD")
+            tracks = await aeji.top_tracks()
+            for track in tracks:
+                print (track.images)
+                await self.change_presence(activity=Activity(
+                    name=track.name,
+                    start=datetime.now(),
+                    large_image_url="https://www.imgonline.com.ua/examples/enlarged-photo.jpg",
+                    large_image_text="hi"
+                    ))
+                await asyncio.sleep(track.duration*1000)
+
 
     async def connect_engines(self):
         self.seasonal = create_async_engine(

@@ -159,6 +159,17 @@ tests-mypy = ["mypy (>=1.6)", "pytest-mypy-plugins"]
 tests-no-zope = ["attrs[tests-mypy]", "cloudpickle", "hypothesis", "pympler", "pytest (>=4.3.0)", "pytest-xdist[psutil]"]
 
 [[package]]
+name = "backoff"
+version = "1.11.1"
+description = "Function decoration for backoff and retry"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+files = [
+    {file = "backoff-1.11.1-py2.py3-none-any.whl", hash = "sha256:61928f8fa48d52e4faa81875eecf308eccfb1016b018bb6bd21e05b5d90a96c5"},
+    {file = "backoff-1.11.1.tar.gz", hash = "sha256:ccb962a2378418c667b3c979b504fdeb7d9e0d29c0579e3b13b86467177728cb"},
+]
+
+[[package]]
 name = "braceexpand"
 version = "0.1.7"
 description = "Bash-style brace expansion for Python"
@@ -722,6 +733,21 @@ files = [
 ]
 
 [[package]]
+name = "spotify"
+version = "0.10.2"
+description = "spotify.py is an asynchronous API wrapper for Spotify written in Python."
+optional = false
+python-versions = ">=3.6,<4.0"
+files = [
+    {file = "spotify-0.10.2-py3-none-any.whl", hash = "sha256:be9d05d6f419f1fba0c02b8123d716082597d4a1fa505b1b2f543d351afb1e30"},
+    {file = "spotify-0.10.2.tar.gz", hash = "sha256:f8e64eefac3f5cbd6718a2b7d43d244707d6974fbc30664fa0c653c56f3941ca"},
+]
+
+[package.dependencies]
+aiohttp = ">=3.6,<4.0"
+backoff = ">=1.10.0,<2.0.0"
+
+[[package]]
 name = "sqlalchemy"
 version = "2.0.27"
 description = "Database Abstraction Library"
@@ -959,4 +985,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "112e12b8bb02a4bfe737e9b1f7c97cac849c0a022056bf018a0fcc01a6397059"
+content-hash = "13bc5a95834cf0a923512e86b516cd19f20937e73c8140d23777f5bc5f8349b3"

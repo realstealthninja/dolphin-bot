@@ -12,7 +12,8 @@ class Misc(commands.Cog):
     async def ping(self, ctx: commands.Context):
         return await ctx.reply(
             embed=disnake.Embed(
-                title=f"�{round(self.bot.latency * 1000)} ms", description=""
+                title="Pong! :ping_pong:", description=f"{round(self.bot.latency * 1000)} ms",
+                color=disnake.Color.blurple()
             )
         )
 
