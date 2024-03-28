@@ -25,11 +25,21 @@ class Misc(commands.Cog):
         if ctx is commands.Context:
             await ctx.reply(file=disnake.File(fp="bonk.gif"))
         else:
-            await ctx.response.send_message(file=disnake.File(fp="bonk.gif"))
+            await ctx.followup.send(file=disnake.File(fp="bonk.gif"))
 
-    @commands.command()
+    @commands.command(description="returns the ping of the bot")
     async def ping(self, ctx: commands.Context):
+        """returns the ping of the bot"""
         return await ctx.reply(
+            embed=disnake.Embed(
+                title="Pong! :ping_pong:", description=f"{round(self.bot.latency * 1000)} ms",
+                color=disnake.Color.blurple()
+            )
+        )
+
+    @commands.slash_command(name="ping", description="shows ping of the bot")
+    async def ping_slash(self, inter: disnake.ApplicationCommandInteraction) -> None:
+        return await inter.response.send_message(
             embed=disnake.Embed(
                 title="Pong! :ping_pong:", description=f"{round(self.bot.latency * 1000)} ms",
                 color=disnake.Color.blurple()
@@ -56,8 +66,9 @@ class Misc(commands.Cog):
             ]
             await message.reply(random.choice(msgs))
 
-    @commands.command()
+    @commands.command(description="glitches the bot")
     async def glitch(self, ctx: commands.Context):
+        """Glitches out the bot do not use"""
         message = "Hey dont do that co"
         await ctx.trigger_typing()
         m  = await ctx.reply("Hey dont do that co")
@@ -82,7 +93,7 @@ class Misc(commands.Cog):
             await asyncio.sleep(0.5)
         await inter.delete_original_message()
     
-    @commands.command()
+    @commands.command(description="bonks a givent user")
     async def bonk(self, ctx: commands.Context, reciver: disnake.Member = None):
         """Bonks a given user"""
         await ctx.trigger_typing()
@@ -109,11 +120,10 @@ class Misc(commands.Cog):
                 await inter.response.send_message("I won't bonk myself")
             else:
                 await self._gen_gif(inter, self.bot.user)
-                await inter.followup.send_message("Ow~ that hurts, y'know?")
+                await inter.followup.send("Ow~ that hurts, y'know?")
         else:
             await self._gen_gif(inter, reciver)
-        
-        
+
 
 def setup(bot: DolphinBot):
     bot.add_cog(Misc(bot))
