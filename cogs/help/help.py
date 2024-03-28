@@ -56,3 +56,18 @@ class HelpCommand(commands.HelpCommand):
         )
         embed.set_footer(text="<argument> required │ [argument] optional")
         await self.context.send(embed=embed)
+    
+    async def send_cog_help(self, cog: commands.Cog):
+        embed= disnake.Embed(
+            title=cog.qualified_name,
+            description=cog.description,
+            timestamp=datetime.now(),
+        )
+
+        value = "```md\n# COMMANDS\n\n"
+        for command in cog.get_commands():
+            if command.hidden:
+                continue
+            value += f"- {command.name}: {command.description} \n"
+        embed.add_field(name=" ", value=value+"```", inline=False)
+        return await self.context.send(embed=embed)
