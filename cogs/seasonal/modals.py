@@ -36,6 +36,7 @@ class event_modal(Modal):
         super().__init__(
             title="Create an Event",
             components=components,
+            timeout=300,
         )
 
     async def callback(self, interaction: disnake.ModalInteraction) -> None:
@@ -55,9 +56,8 @@ class event_modal(Modal):
             embed = disnake.Embed(
                 title=interaction.text_values.get("title"),
                 description=interaction.text_values.get("description"),
-                
             ).set_footer(
-                text=f"until {interaction.text_values.get("time")}"
+                text=f"until {interaction.text_values.get('time')}"
             )
 
             msg = await self.cog.bot.get_channel(channel.channel).send(embed=embed)

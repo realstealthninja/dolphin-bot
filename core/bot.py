@@ -12,13 +12,14 @@ from .constants import SPOTIFY_ID
 
 # spotify
 import spotify
+from spotify import Track
 
 
 # db
 from sqlalchemy.ext.asyncio import create_async_engine
 
 # disnake
-import disnake
+
 from disnake.ext.commands import Bot
 from disnake.ext import commands
 from disnake.ext.tasks import loop
@@ -55,20 +56,21 @@ class DolphinBot(Bot):
                 self.load_extension(file)
         self.load_extension("jishaku")
 
-    @loop(seconds=540)
+    @loop(seconds=600)
     async def update_presence(self) -> None:
         async with spotify.Client(SPOTIFY_ID, SPOTIFY_TOKEN) as r:
             aeji = await r.get_artist("4J45U4EhxTBWKNe28ASAaD")
-            tracks = await aeji.top_tracks()
+            tracks: list[Track] = await aeji.top_tracks()
             for track in tracks:
-                print (track.images)
                 await self.change_presence(activity=Activity(
-                    name=track.name,
-                    start=datetime.now(),
-                    large_image_url="https://www.imgonline.com.ua/examples/enlarged-photo.jpg",
-                    large_image_text="hi"
+                    name = track.name,
+                    type = ActivityType.listening,
                     ))
-                await asyncio.sleep(track.duration*1000)
+                await asyncio.sleep(120)
+                await self.change_presence(activity=Activity(
+                    name="db/help for help",
+                    type=ActivityType.watching
+                ))
 
 
     async def connect_engines(self):

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Mapping
 
 import disnake
@@ -12,6 +13,7 @@ class HelpCommand(commands.HelpCommand):
             disnake.Embed(
                 title="** Help command **",
                 description="```toml\n[do db/help <extension> to learn more about <extension>]```",
+                timestamp=datetime.now()
             )
             .set_author(name="helping is nice")
             .set_footer(
@@ -27,7 +29,7 @@ class HelpCommand(commands.HelpCommand):
         if not command.description:
             command.description = "``"
         embed = (
-            disnake.Embed()
+            disnake.Embed(timestamp=datetime.now())
             .set_author(name="Help", icon_url=self.context.author.avatar)
             .add_field(
                 name="\> Name <",

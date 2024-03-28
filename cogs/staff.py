@@ -10,7 +10,11 @@ class Staff(commands.Cog):
         self.bot = bot
 
     async def cog_check(self, ctx: commands.Context) -> bool:
-        return await self.bot.is_owner(ctx.author)
+        if self.bot.is_owner(ctx.author):
+            return True
+        else:
+            await ctx.send("be owner next time lol")
+            return False
 
     @commands.command(hidden=True, description="loads an extension")
     async def load(self, ctx: commands.Context, name: str):
