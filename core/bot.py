@@ -72,6 +72,11 @@ class DolphinBot(Bot):
                     type=ActivityType.watching
                 ))
 
+    @Bot.check()
+    async def slashclause(ctx: commands.Context):
+        if ctx.author.id == 672824404702527509:
+            await ctx.reply("please use the slash commands, they're better! :slight_smile:")
+        return False
 
     async def connect_engines(self):
         self.seasonal = create_async_engine(
