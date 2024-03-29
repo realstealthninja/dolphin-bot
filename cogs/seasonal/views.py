@@ -12,7 +12,8 @@ class ChannelSelectView(View):
 
         @disnake.ui.channel_select(
             placeholder="text annoucement/submission channel",
-            channel_types=[disnake.ChannelType.text]
+            channel_types=[disnake.ChannelType.text],
+            custom_id="event_channel_select"
         )
         async def callback(
             self,
