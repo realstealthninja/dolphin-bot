@@ -70,8 +70,11 @@ class DolphinBot(Bot):
                     name="db/help for help",
                     type=ActivityType.watching
                 ))
-
-
+    
+    # check if someone is not using slash commands
+    async def bot_check(self, ctx: commands.Context) -> bool:
+        if ctx.author.id == 672824404702527509:
+            return False
         
 
     async def connect_engines(self):

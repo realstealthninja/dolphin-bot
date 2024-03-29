@@ -1,0 +1,7 @@
+disnake
+disnake-jishaku
+sqlalchemy[asyncio]
+aiosqlite
+python-dateutil
+spotify
+pillow
