@@ -1,4 +1,5 @@
 import datetime
+import asyncio
 import disnake
 from disnake.ext import commands
 
@@ -49,6 +50,28 @@ class Staff(commands.Cog):
         await message.edit(embed=embed)
         await message.channel.send("all cogs successfully reloaded")
 
+
+    @commands.command(hidden=True)
+    async def pull(self, ctx: commands.Context):
+        embed = disnake.Embed(title="Git pull.", description="")
+        git_commands = [["git", "stash"], ["git", "pull", "--ff-only"]]
+
+        for git_command in git_commands:
+            process = await asyncio.create_subprocess_exec(
+                git_command[0],
+                *git_command[1:],
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+
+            (output, error) = await process.communicate()
+            embed.description += f'[{" ".join(git_command)!r} exited with return code {process.returncode}\n'
+
+            if output:
+                embed.description += f"**[stdout]**\n{output.decode()}\n"
+            if error:
+                embed.description += f"**[stderr]**\n{error.decode()}\n"
+        await ctx.reply(embed=embed)
 
 def setup(bot: DolphinBot):
     bot.add_cog(Staff(bot))
