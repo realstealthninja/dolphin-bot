@@ -72,11 +72,17 @@ class Misc(commands.Cog):
             await message.reply(random.choice(msgs))
         elif any(song in message.content.lower() for song in SONGS):
             msg = "you know, {} is a song of Aeji right? GO CHECK [IT](https://open.spotify.com/artist/4J45U4EhxTBWKNe28ASAaD) OUT"
-            songs = ""
+            songs = []
             for song in SONGS:
                 if song in message.content.lower():
-                    songs += f"{song}"
-            await message.reply(msg.format(songs))
+                    songs.append(f"{song}")
+            if len(songs) > 1:
+                msg = msg.replace("a", "").replace("is", "are").replace("song", "songs")
+                for i in range(0, len(songs)-1):
+                    songs[i] += ', '
+            else:
+                songs[0] += " "
+            await message.reply(msg.format(''.join(songs)))
                 
 
     @commands.command(description="glitches the bot")
