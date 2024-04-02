@@ -6,6 +6,8 @@ from core import DolphinBot
 from PIL import Image
 from io import BytesIO
 
+SONGS = ["fortune", "blossom", "destiny", "limitless", "ghost"]
+
 class Misc(commands.Cog):
     def __init__(self, bot: DolphinBot):
         self.bot = bot
@@ -68,16 +70,17 @@ class Misc(commands.Cog):
                 "You should stream Aejisei's music while you look at my commands\n [link](https://open.spotify.com/artist/4J45U4EhxTBWKNe28ASAaD)"
             ]
             await message.reply(random.choice(msgs))
-        elif any(song in message.content for song in SONGS):
+        elif any(song in message.content.lower() for song in SONGS):
             msg = "you know, {} is a song of Aeji right? GO CHECK [IT](https://open.spotify.com/artist/4J45U4EhxTBWKNe28ASAaD) OUT"
             songs = ""
             for song in SONGS:
-                if song in message.content:
+                if song in message.content.lower():
                     songs += f"{song}"
             await message.reply(msg.format(songs))
                 
 
     @commands.command(description="glitches the bot")
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def glitch(self, ctx: commands.Context):
         """Glitches out the bot do not use"""
         message = "Hey dont do that co"
@@ -91,16 +94,17 @@ class Misc(commands.Cog):
             await asyncio.sleep(0.5)
         await m.delete()
     
+    
     @commands.slash_command(name="glitch", description="glitches the bot please do not use this command")
     async def glitch_slash(self, inter: disnake.ApplicationCommandInteraction):
         message = "Hey dont do that co"
         await inter.response.defer()
-        await inter.response.send_message("Hey dont do that co")
+        await inter.followup.send(message)
         for i in range(10):
-            await inter.response.edit_message(content=message + "m"*i)
+            await inter.edit_original_message(content=message + "m"*i)
             await asyncio.sleep(0.1)
         for i in range(4):
-            await inter.response.edit_message(content="rebooting" + "."*i)
+            await inter.edit_original_message(content="rebooting" + "."*i)
             await asyncio.sleep(0.5)
         await inter.delete_original_message()
     
@@ -121,6 +125,7 @@ class Misc(commands.Cog):
             await self._gen_gif(ctx, reciver)
     
     @commands.slash_command(name="bonk", description="bonks a given user")
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def bonk_slash(self, inter: disnake.ApplicationCommandInteraction, reciver: disnake.Member = None):
         await inter.response.defer()
         if not reciver:
