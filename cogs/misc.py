@@ -48,6 +48,9 @@ class Misc(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: disnake.Message):
+        if message.author.id == self.bot.user.id:
+            return
+        
         if message.content.find("db/") != -1:
             return
         if message.author.id == 922001668437061712 and message.content == "ded chat":
@@ -65,6 +68,14 @@ class Misc(commands.Cog):
                 "You should stream Aejisei's music while you look at my commands\n [link](https://open.spotify.com/artist/4J45U4EhxTBWKNe28ASAaD)"
             ]
             await message.reply(random.choice(msgs))
+        elif any(song in message.content for song in SONGS):
+            msg = "you know, {} is a song of Aeji right? GO CHECK [IT](https://open.spotify.com/artist/4J45U4EhxTBWKNe28ASAaD) OUT"
+            songs = ""
+            for song in SONGS:
+                if song in message.content:
+                    songs += f"{song}"
+            await message.reply(msg.format(songs))
+                
 
     @commands.command(description="glitches the bot")
     async def glitch(self, ctx: commands.Context):

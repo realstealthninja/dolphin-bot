@@ -74,6 +74,7 @@ class DolphinBot(Bot):
     # check if someone is not using slash commands
     async def bot_check(self, ctx: commands.Context) -> bool:
         if ctx.author.id == 672824404702527509:
+            await ctx.send("pls use the new slash commands :3")
             return False
         
 
