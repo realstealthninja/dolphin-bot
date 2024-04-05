@@ -69,7 +69,7 @@ class Misc(commands.Cog):
                 "You should stream Aejisei's music while you look at my commands\n [link](https://open.spotify.com/artist/4J45U4EhxTBWKNe28ASAaD)"
             ]
             await message.reply(random.choice(msgs))
-        elif "aeji's music" in message.content.lower():
+        elif any(phrase in message.content.lower() for phrase in ["aeji's music", "aeji's spotify"]):
             await message.reply("here is a link to [aeji's music](https://open.spotify.com/artist/4J45U4EhxTBWKNe28ASAaD)") 
 
     @commands.command(description="glitches the bot")
