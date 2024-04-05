@@ -23,7 +23,7 @@ class Misc(commands.Cog):
             frame.paste(avatar, (400, 180))
             new.append(frame)
         new[0].save("bonk.gif", format="GIF", save_all=True, append_images=new[1:], loop=0, delay=0.1)
-        if ctx is commands.Context:
+        if isinstance(ctx, commands.Context):
             await ctx.reply(file=disnake.File(fp="bonk.gif"))
         else:
             await ctx.followup.send(file=disnake.File(fp="bonk.gif"))
