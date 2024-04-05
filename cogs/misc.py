@@ -6,7 +6,6 @@ from core import DolphinBot
 from PIL import Image
 from io import BytesIO
 
-SONGS = ["fortune", "blossom", "destiny", "limitless", "ghost"]
 
 class Misc(commands.Cog):
     def __init__(self, bot: DolphinBot):
@@ -70,20 +69,8 @@ class Misc(commands.Cog):
                 "You should stream Aejisei's music while you look at my commands\n [link](https://open.spotify.com/artist/4J45U4EhxTBWKNe28ASAaD)"
             ]
             await message.reply(random.choice(msgs))
-        elif any(song in message.content.lower() for song in SONGS):
-            msg = "you know, {} is a song of Aeji right? GO CHECK [IT](https://open.spotify.com/artist/4J45U4EhxTBWKNe28ASAaD) OUT"
-            songs = []
-            for song in SONGS:
-                if song in message.content.lower():
-                    songs.append(f"{song}")
-            if len(songs) > 1:
-                msg = msg.replace("a", "").replace("is", "are").replace("song", "songs")
-                for i in range(0, len(songs)-1):
-                    songs[i] += ', '
-            else:
-                songs[0] += " "
-            await message.reply(msg.format(''.join(songs)))
-                
+        elif "aeji's music" in message.content.lower():
+            await message.reply("here is a link to [aeji's music](https://open.spotify.com/artist/4J45U4EhxTBWKNe28ASAaD)") 
 
     @commands.command(description="glitches the bot")
     @commands.cooldown(1, 5, commands.BucketType.user)
