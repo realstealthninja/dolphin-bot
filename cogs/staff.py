@@ -11,7 +11,7 @@ class Staff(commands.Cog):
         self.bot = bot
 
     async def cog_check(self, ctx: commands.Context) -> bool:
-        if self.bot.is_owner(ctx.author):
+        if (await self.bot.is_owner(ctx.author)):
             return True
         else:
             await ctx.send("be owner next time lol")

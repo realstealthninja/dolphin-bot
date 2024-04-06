@@ -28,7 +28,7 @@ class Misc(commands.Cog):
             new[0].save(image, format="PNG")
 
     async def _gen_gwab(self, ctx: commands.Context | disnake.ApplicationCommandInteraction, user):
-        await self._gen_gif("gwwab.png", await user.avatar.with_size(128).read(), ())
+        await self._gen_gif("gwwab.png", await user.avatar.with_size(64).read(), (57, 37))
     async def _gen_bonk(self, ctx: commands.Context | disnake.ApplicationCommandInteraction, user):
         await self._gen_gif("bonk.gif", await user.avatar.with_size(256).read(), (400, 180))
         if isinstance(ctx, commands.Context):
