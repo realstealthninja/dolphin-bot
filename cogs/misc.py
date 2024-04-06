@@ -10,19 +10,27 @@ from io import BytesIO
 class Misc(commands.Cog):
     def __init__(self, bot: DolphinBot):
         self.bot = bot
-
-    async def _gen_gif(self, ctx: commands.Context | disnake.ApplicationCommandInteraction, user):
-        gif = Image.open("./assets/gifs/bonk.gif")
-        avatar: BytesIO = BytesIO(await user.avatar.with_size(256).read())
+    
+    async def _gen_gif(self, image: str, avatar: BytesIO, location: tuple[int, int]):
+        gif = Image.open(f"./assets/gifs/{image}")
         avatar = Image.open(avatar)
-        new: list[Image.Image] = []
+        
+        new = []
         for i in range(gif.n_frames):
             gif.seek(i)
             frame = Image.new('RGBA', gif.size)
-            frame.paste(gif)
-            frame.paste(avatar, (400, 180))
+            frame.paste(avatar, location)
             new.append(frame)
-        new[0].save("bonk.gif", format="GIF", save_all=True, append_images=new[1:], loop=0, delay=0.1)
+        
+        if len(gif.n_frames) > 1:
+            new[0].save(image, format="GIF", save_all=True, append_images=new[1:], loop=0, delay=0)
+        else:
+            new[0].save(image, format="PNG")
+
+    async def _gen_gwab(self, ctx: commands.Context | disnake.ApplicationCommandInteraction, user):
+        await self._gen_gif("gwwab.png", await user.avatar.with_size(128).read(), ())
+    async def _gen_bonk(self, ctx: commands.Context | disnake.ApplicationCommandInteraction, user):
+        await self._gen_gif("bonk.gif", await user.avatar.with_size(256).read(), (400, 180))
         if isinstance(ctx, commands.Context):
             await ctx.reply(file=disnake.File(fp="bonk.gif"))
         else:
@@ -46,31 +54,6 @@ class Misc(commands.Cog):
                 color=disnake.Color.blurple()
             )
         )
-
-    @commands.Cog.listener()
-    async def on_message(self, message: disnake.Message):
-        if message.author.id == self.bot.user.id:
-            return
-        
-        if message.content.find("db/") != -1:
-            return
-        if message.author.id == 922001668437061712 and message.content == "ded chat":
-            await message.reply("You know saying dead chat doesnt do anything right?")
-        elif len(message.stickers) > 0 and message.stickers[0].name == "Grab":
-            msgs = ["you know they don't like getting grabbed.", "please stop grabbing people without consent!", "That poor cat"]
-            await message.reply(random.choice(msgs))
-        elif self.bot.user.mentioned_in(message):
-            msgs = [
-                "Hi how can i help you? try db/help!",
-                "Hello!",
-                f":3 \nugh {self.bot.get_user(922001668437061712).mention} why do you make me do this?",
-                "Did someone ping me?",
-                "Need something?",
-                "You should stream Aejisei's music while you look at my commands\n [link](https://open.spotify.com/artist/4J45U4EhxTBWKNe28ASAaD)"
-            ]
-            await message.reply(random.choice(msgs))
-        elif any(phrase in message.content.lower() for phrase in ["aeji's music", "aeji's spotify"]):
-            await message.reply("here is a link to [aeji's music](https://open.spotify.com/artist/4J45U4EhxTBWKNe28ASAaD)") 
 
     @commands.command(description="glitches the bot")
     @commands.cooldown(1, 5, commands.BucketType.user)
@@ -106,32 +89,64 @@ class Misc(commands.Cog):
         """Bonks a given user"""
         await ctx.trigger_typing()
         if not reciver:
-            await self._gen_gif(ctx, ctx.author)
+            await self._gen_bonk(ctx, ctx.author)
             return
         if reciver.id == self.bot.user.id:
             if(random.choice([True, False])):
                 await ctx.reply("I won't bonk myself")
             else:
-                await self._gen_gif(ctx, self.bot.user)
+                await self._gen_bonk(ctx, self.bot.user)
                 await ctx.send("Ow~ that hurts, y'know?")
         else:
-            await self._gen_gif(ctx, reciver)
+            await self._gen_bonk(ctx, reciver)
     
     @commands.slash_command(name="bonk", description="bonks a given user")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def bonk_slash(self, inter: disnake.ApplicationCommandInteraction, reciver: disnake.Member = None):
         await inter.response.defer()
         if not reciver:
-            await self._gen_gif(inter, inter.author)
+            await self._gen_bonk(inter, inter.author)
             return
         if reciver.id == self.bot.user.id:
             if(random.choice([True, False])):
                 await inter.response.send_message("I won't bonk myself")
             else:
-                await self._gen_gif(inter, self.bot.user)
+                await self._gen_bonk(inter, self.bot.user)
                 await inter.followup.send("Ow~ that hurts, y'know?")
         else:
-            await self._gen_gif(inter, reciver)
+            await self._gen_bonk(inter, reciver)
+
+    @commands.slash_command(name="gwwab", description="grabs a given user")
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def grab_slash(self, inter: disnake.ApplicationCommandInteraction, gwwabee: disnake.Member = None):
+        await inter.response.defer()
+        if not gwwabee:
+            await self._gen_grab(inter, inter.author)
+            return
+        if gwwabee.id == self.bot.user.id:
+            if(random.choice([True, False])):
+                await inter.response.send_message("I won't gwwab myself 😡")
+            else:
+                await self._gen_grab(inter, self.bot.user)
+                await inter.followup.send("Stop gwwabing me 😡")
+        else:
+            await self._gen_grab(inter, gwwabee)
+
+    @commands.commadn(name="gwwab", description="grabs a given user")
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def grab_text(self, inter: disnake.ApplicationCommandInteraction, gwwabee: disnake.Member = None):
+        await inter.response.defer()
+        if not gwwabee:
+            await self._gen_grab(inter, inter.author)
+            return
+        if gwwabee.id == self.bot.user.id:
+            if(random.choice([True, False])):
+                await inter.response.send_message("I won't gwwab myself 😡")
+            else:
+                await self._gen_grab(inter, self.bot.user)
+                await inter.followup.send("Stop gwwabing me 😡")
+        else:
+            await self._gen_grab(inter, gwwabee)
 
 
 def setup(bot: DolphinBot):
