@@ -19,23 +19,25 @@ class Misc(commands.Cog):
         for i in range(gif.n_frames):
             gif.seek(i)
             frame = Image.new('RGBA', gif.size)
+            frame.paste(gif)
             frame.paste(avatar, location)
             new.append(frame)
         
-        if len(gif.n_frames) > 1:
+        if gif.n_frames > 1:
             new[0].save(image, format="GIF", save_all=True, append_images=new[1:], loop=0, delay=0)
         else:
             new[0].save(image, format="PNG")
 
-    async def _gen_gwab(self, ctx: commands.Context | disnake.ApplicationCommandInteraction, user):
-        await self._gen_gif("gwwab.png", await user.avatar.with_size(64).read(), (57, 37))
+    async def _gen_grab(self, ctx: commands.Context | disnake.ApplicationCommandInteraction, user):
+        await self._gen_gif("gwwab.png", BytesIO(await user.avatar.with_size(64).read()), (57, 37))
+        print(type(ctx))
         if isinstance(ctx, commands.Context):
             await ctx.reply(file=disnake.File(fp="gwwab.png"))
         else:
             await ctx.followup.send(file=disnake.File(fp="gwwab.png"))
 
     async def _gen_bonk(self, ctx: commands.Context | disnake.ApplicationCommandInteraction, user):
-        await self._gen_gif("bonk.gif", await user.avatar.with_size(256).read(), (400, 180))
+        await self._gen_gif("bonk.gif", BytesIO(await user.avatar.with_size(256).read()), (400, 180))
         if isinstance(ctx, commands.Context):
             await ctx.reply(file=disnake.File(fp="bonk.gif"))
         else:
@@ -59,6 +61,13 @@ class Misc(commands.Cog):
                 color=disnake.Color.blurple()
             )
         )
+    @commands.slash_command(name="link", description="sends link of aeji's music")
+    async def link_slash(self, ctx: disnake.ApplicationCommandInteraction):
+        await ctx.response.send_message("here is a [link](https://open.spotify.com/artist/4J45U4EhxTBWKNe28ASAaD) to aeji's music")
+
+    @commands.command(description="sends link of aeji's music")
+    async def link(self, ctx: commands.Context):
+        await ctx.send("here is a [link](https://open.spotify.com/artist/4J45U4EhxTBWKNe28ASAaD) to aeji's music")
 
     @commands.command(description="glitches the bot")
     @commands.cooldown(1, 5, commands.BucketType.user)
@@ -137,21 +146,21 @@ class Misc(commands.Cog):
         else:
             await self._gen_grab(inter, gwwabee)
 
-    @commands.commadn(name="gwwab", description="grabs a given user")
+    @commands.command(name="gwwab", description="grabs a given user")
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def grab_text(self, inter: disnake.ApplicationCommandInteraction, gwwabee: disnake.Member = None):
-        await inter.response.defer()
+    async def grab_text(self, ctx: commands.Context, gwwabee: disnake.Member = None):
+        await ctx.trigger_typing()
         if not gwwabee:
-            await self._gen_grab(inter, inter.author)
+            await self._gen_grab(ctx, ctx.author)
             return
         if gwwabee.id == self.bot.user.id:
             if(random.choice([True, False])):
-                await inter.response.send_message("I won't gwwab myself 😡")
+                await ctx.response.send_message("I won't gwwab myself 😡")
             else:
-                await self._gen_grab(inter, self.bot.user)
-                await inter.followup.send("Stop gwwabing me 😡")
+                await self._gen_grab(ctx, self.bot.user)
+                await ctx.reply("Stop gwwabing me 😡")
         else:
-            await self._gen_grab(inter, gwwabee)
+            await self._gen_grab(ctx, gwwabee)
 
 
 def setup(bot: DolphinBot):
