@@ -29,8 +29,8 @@ class event_modal(Modal):
                 label="Date",
                 placeholder="14/03/2007",
                 custom_id="date",
-                style=TextInputStyle.short
-            )
+                style=TextInputStyle.short,
+            ),
         ]
 
         super().__init__(
@@ -44,29 +44,29 @@ class event_modal(Modal):
         for key, value in interaction.text_values.items():
             embed.add_field(name=key.capitalize(), value=value, inline=False)
         await interaction.response.send_message(embed=embed)
-        
+
         channel = await fetch_config(self.cog, interaction.guild_id)
-        
+
         if not channel:
-            await interaction.followup.send(embed=disnake.Embed(
-                title="Your server hasn't setup events yet! :x:",
-                color=disnake.Color.red()
-            ))
+            await interaction.followup.send(
+                embed=disnake.Embed(
+                    title="Your server hasn't setup events yet! :x:",
+                    color=disnake.Color.red(),
+                )
+            )
         else:
             embed = disnake.Embed(
                 title=interaction.text_values.get("title"),
                 description=interaction.text_values.get("description"),
-            ).set_footer(
-                text=f"until {interaction.text_values.get('time')}"
-            )
+            ).set_footer(text=f"until {interaction.text_values.get('date')}")
 
             msg = await self.cog.bot.get_channel(channel.channel).send(embed=embed)
 
             await add_event(
-                self.cog, datetime.strptime(interaction.text_values.get
-                                            ("time"), "%d/%m/%y").timestamp(),
-                                            interaction.guild_id, msg.id
+                self.cog,
+                datetime.strptime(
+                    interaction.text_values.get("date"), "%d/%m/%Y"
+                ).timestamp(),
+                interaction.guild_id,
+                msg.id,
             )
-        
-        
-        
