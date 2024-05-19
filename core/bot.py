@@ -16,7 +16,7 @@ from spotify import Track
 
 
 # db
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
 # disnake
 from disnake.ext.commands import Bot
@@ -38,7 +38,7 @@ class DolphinBot(Bot):
             owner_ids=[521226389559443461, 298043305927639041],
         )
         self.COGS: list = list()
-        self.seasonal = None
+        self.seasonal: AsyncEngine | None = None
         self.loop.create_task(self.connect_engines())
 
         for file in os.listdir("./cogs/"):
@@ -61,10 +61,12 @@ class DolphinBot(Bot):
             aeji = await r.get_artist("4J45U4EhxTBWKNe28ASAaD")
             tracks: list[Track] = await aeji.top_tracks()
             for track in tracks:
+
                 await self.change_presence(activity=Activity(
                     name = track.name,
                     type = ActivityType.listening,
                     ))
+
                 await asyncio.sleep(120)
                 await self.change_presence(activity=Activity(
                     name="db/help for help",
