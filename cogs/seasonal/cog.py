@@ -66,12 +66,11 @@ class Seasonal(commands.Cog):
     async def _leaderboard(self, ctx: disnake.ApplicationCommandInteraction) -> None:
         points: list[Points] = await fetch_points(self, ctx.guild.id)
         users: list[disnake.User] = []
-        string = ""
         for point in points:
             user = self.bot.get_user(point.userId)
-            
-            string += f"\n{user.name} - {point.point}"
-        await ctx.response.send_message(string)
+            users.append(user)
+        await make_leaderboard(users, points)
+        await ctx.response.send_message(file=disnake.File("board.png"))
 
     @commands.command()
     @commands.check(if_admin)
