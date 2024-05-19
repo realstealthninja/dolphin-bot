@@ -7,7 +7,7 @@ from disnake.ext import tasks
 from core.bot import DolphinBot
 
 from .modals import event_modal
-from .objects import Base, Points
+from .objects import Base, Points, Submission
 from .views import ChannelSelectView
 
 from .utils import (
@@ -21,6 +21,7 @@ from .utils import (
     fetch_season,
     fetch_submissions,
     remove_reaction,
+    make_leaderboard
 )
 
 
@@ -51,20 +52,24 @@ class Seasonal(commands.Cog):
     @commands.command()
     async def leaderboard(self, ctx: commands.Context) -> None:
         points: list[Points] = await fetch_points(self, ctx.guild.id)
-        string = ""
+        users: list[disnake.User] = []
         if not points:
             return await ctx.send("no one has any points yet")
         for point in points:
             user = self.bot.get_user(point.userid)
-            string += f"\n{user.name} - {point.point}"
-        await ctx.send(string)
+            users.append(user)
+        await make_leaderboard(users, points)
+        await ctx.send(file=disnake.File("board.png"))
+
 
     @commands.slash_command(name="leaderboard")
     async def _leaderboard(self, ctx: disnake.ApplicationCommandInteraction) -> None:
         points: list[Points] = await fetch_points(self, ctx.guild.id)
+        users: list[disnake.User] = []
         string = ""
         for point in points:
             user = self.bot.get_user(point.userId)
+            
             string += f"\n{user.name} - {point.point}"
         await ctx.response.send_message(string)
 
@@ -80,6 +85,34 @@ class Seasonal(commands.Cog):
             ),
             view=view,
         )
+    
+    @commands.command()
+    async def event_leaderboard(self, ctx: commands.Context):
+        event = await fetch_event(self, ctx.guild.id)
+        if not event:
+            await ctx.reply("No event going on right now sorry!")
+            return
+
+        submissions: list[Submission] = fetch_submissions()
+        ret_val = ""
+        for submission in submissions:
+            ret_val += f"1. [{self.bot.get_user(submission.userId)}]({self.bot.get_message(self.bot.get_message(submission.messageId).jump_url)}) ->  ({submission.reactions}) \n"
+        await ctx.reply(ret_val)
+    
+    @commands.slash_command(name="leaderboard_slash")
+    async def event_leaderboard_slash(self, inter: disnake.ApplicationCommandInteraction):
+        event = await fetch_event(self, inter.guild.id)
+        if not event:
+            await inter.response.send_message("No event going on right now sorry!")
+            return
+        
+        submissions: list[Submission] = fetch_submissions()
+        ret_val = ""
+        for submission in submissions:
+            ret_val += f"1. [{self.bot.get_user(submission.userId)}]({self.bot.get_message(self.bot.get_message(submission.messageId).jump_url)}) ->  ({submission.reactions}) \n"
+        await inter.response.send_message(ret_val)
+
+
 
     @tasks.loop(minutes=3)
     async def event_end(self):

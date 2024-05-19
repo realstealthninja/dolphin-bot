@@ -2,6 +2,12 @@ from .objects import Events, Configs, Points, Season, Submission
 
 from sqlalchemy import select, delete
 
+import disnake
+
+
+import cv2 as cv
+import numpy as np
+
 
 async def add_event(cog, date, id, msgId):
     async with cog.session() as conn:
@@ -135,5 +141,31 @@ async def fetch_season(cog, id) -> Season | None:
         return res.scalars().first()
 
 
-async def make_leaderboard():
-    pass
+async def make_leaderboard(users: list[disnake.User], points: list[Points]):
+    img = cv.imread("assets/images/leaderboard.png")
+
+    for count, user in enumerate(users):
+        avatar = await user.avatar.with_size(128).read()
+        avatar = np.asarray(bytearray(avatar))
+        avatar = cv.imdecode(avatar, cv.IMREAD_COLOR)
+
+        img[50:50+128, 50+(160*count):50+128] = avatar
+
+        color = (24, 91, 66)
+
+        match count:
+            case 0:
+                color = (0, 255, 255)
+            case 1:
+                color = (255, 255, 255)
+            case 2:
+                color = (0, 123, 255)
+
+        # #1
+        cv.putText(img, f"#{count+1}", (195, 120+ (140 * count)), cv.FONT_HERSHEY_COMPLEX, 1, color, 2, cv.LINE_AA)
+        # name
+        cv.putText(img, user.name, (250, 120+ (140 * count)), cv.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2, cv.LINE_AA)
+        # points
+        cv.putText(img, f"⬤ {points[count].point}", (475, 120+ (140 * count)), cv.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2, cv.LINE_AA)
+    
+    cv.imwrite("board.png", img)
