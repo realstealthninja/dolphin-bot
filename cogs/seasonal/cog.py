@@ -192,14 +192,20 @@ class Seasonal(commands.Cog):
 
         for submission in submissions:
             msg = self.bot.get_message(submission.messageId)
+
+            # check if the reaction was to a submission
             if submission.messageId == reaction.message.id:
+                # check if the reactor was the creator
                 if submission.userId == user.id:
                     return
+                
                 for ereaction in msg.reactions:
                     if ereaction == reaction:
+                        #  if  we find the reaction add it to the db
                         await add_reaction(self, msg.id)
                         return
 
+            # check  for the other messages to see if the reactor has already reacted 
             for reaction in msg.reactions:
                 if ereaction.emoji == "🔥":
                     try:
