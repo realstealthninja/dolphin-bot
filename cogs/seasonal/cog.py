@@ -82,9 +82,8 @@ class Seasonal(commands.Cog):
 
         msg = await  ctx.send("Reloading submissions:")
         
-        event_msg = await self.bot.fetch_message(event.messageId)
 
-        async for message in channel.history(after=event_msg):
+        async for message in channel.history(after=self.bot.get_message(event.messageId)):
             if message.author.bot:
                 continue
 
