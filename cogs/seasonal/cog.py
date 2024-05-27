@@ -79,6 +79,8 @@ class Seasonal(commands.Cog):
         config = await fetch_config(self, ctx.guild.id)
         event = await fetch_event(self, ctx.guild.id)
 
+        msg = await  ctx.send("Reloading submissions:")
+
         for message in await channel.history(after=self.bot.get_message(event.message)):
             if message.author.bot:
                 return
@@ -91,6 +93,9 @@ class Seasonal(commands.Cog):
 
             await message.add_reaction("🔥")
             await add_submssion(self, message.guild.id, message.id, message.author.id)
+            msg = await msg.edit(msg.content + f"\nadded: {message.author.name}")
+            
+        await msg.edit(msg.content + "\n added submissions sucessfully")
 
 
     @commands.command()
