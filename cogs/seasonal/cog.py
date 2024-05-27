@@ -94,7 +94,7 @@ class Seasonal(commands.Cog):
                 continue
 
             for submission in submissions:
-                if message.messageId  == submission.messageId:
+                if message.id  == submission.messageId:
                     continue
 
             await message.add_reaction("🔥")
