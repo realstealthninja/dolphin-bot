@@ -33,9 +33,9 @@ class Events(Base):
 class Submission(Base):
     __tablename__ = "submissions"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] 
     messageId: Mapped[int]
-    userId: Mapped[int]
+    userId: Mapped[int] = mapped_column(primary_key=True)
     reactions: Mapped[int]
 
 
