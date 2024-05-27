@@ -127,7 +127,7 @@ class Seasonal(commands.Cog):
 
         submissions: list[Submission] = await fetch_submissions(self, ctx.guild.id)
 
-        submission_channel = await fetch_config(self, ctx.guild.id)
+        submission_channel = await fetch_config(self, ctx.guild.id).channel
         
         ret_val = ""
         for index, submission in enumerate(submissions):
@@ -144,7 +144,7 @@ class Seasonal(commands.Cog):
         
         submissions: list[Submission] = await fetch_submissions(self, inter.guild_id)
 
-        submission_channel = await fetch_config(self, inter.guild.id)
+        submission_channel = await fetch_config(self, inter.guild.id).channel
         
         ret_val = ""
 
