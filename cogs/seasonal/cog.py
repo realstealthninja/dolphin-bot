@@ -72,6 +72,27 @@ class Seasonal(commands.Cog):
         await make_leaderboard(users, points)
         await ctx.response.send_message(file=disnake.File("board.png"))
 
+
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    async def reload_submission(self, ctx: commands.Context, channel: disnake.TextChannel) -> None:
+        config = await fetch_config(self, ctx.guild.id)
+        event = await fetch_event(self, ctx.guild.id)
+
+        for message in await channel.history(after=self.bot.get_message(event.message)):
+            if message.author.bot:
+                return
+
+            if not config or not event or message.channel.id != config.channel:
+                return
+
+            if len(message.attachments) == 0:
+                return
+
+            await message.add_reaction("🔥")
+            await add_submssion(self, message.guild.id, message.id, message.author.id)
+
+
     @commands.command()
     @commands.check(if_admin)
     async def config(self, ctx: commands.Context) -> None:
