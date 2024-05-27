@@ -126,9 +126,13 @@ class Seasonal(commands.Cog):
             return
 
         submissions: list[Submission] = await fetch_submissions(self, ctx.guild.id)
+
+        submission_channel = await fetch_config(self, ctx.guild.id)
+        
         ret_val = ""
         for index, submission in enumerate(submissions):
-            ret_val += f"{index + 1}. [{self.bot.get_user(submission.userId)}]({self.bot.get_message(submission.messageId).jump_url}) ->  ({submission.reactions}) \n"
+            message = await self.bot.get_channel(submission_channel).fetch_message(submission.messageId)
+            ret_val += f"{index + 1}. [{self.bot.get_user(submission.userId)}]({message.jump_url}) ->  ({submission.reactions}) \n"
         await ctx.reply(ret_val)
     
     @commands.slash_command(name="event_leaderboard", description="shows the event leaderboard")
@@ -139,9 +143,14 @@ class Seasonal(commands.Cog):
             return
         
         submissions: list[Submission] = await fetch_submissions(self, inter.guild_id)
+
+        submission_channel = await fetch_config(self, inter.guild.id)
+        
         ret_val = ""
+
         for index, submission in enumerate(submissions):
-            ret_val += f"{index + 1}. [{self.bot.get_user(submission.userId)}]({self.bot.get_message(submission.messageId.jump_url)}) ->  ({submission.reactions}) \n"
+            message = await self.bot.get_channel(submission_channel).fetch_message(submission.messageId)
+            ret_val += f"{index + 1}. [{self.bot.get_user(submission.userId)}]({message.jump_url}) ->  ({submission.reactions}) \n"
         await inter.response.send_message(ret_val)
 
 
