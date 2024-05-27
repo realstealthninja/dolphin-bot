@@ -85,17 +85,17 @@ class Seasonal(commands.Cog):
 
         async for message in channel.history(after=self.bot.get_message(event.messageId)):
             if message.author.bot:
-                return
+                continue
 
             if not config or not event or message.channel.id != config.channel:
-                return
+                continue
 
             if len(message.attachments) == 0:
-                return
+                continue
 
             for submission in submissions:
                 if message.id  == submission.messageId:
-                    return
+                    continue
 
             await message.add_reaction("🔥")
 
