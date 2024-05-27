@@ -95,7 +95,7 @@ class Seasonal(commands.Cog):
         submissions: list[Submission] = await fetch_submissions(self, ctx.guild.id)
         ret_val = ""
         for submission in submissions:
-            ret_val += f"1. [{self.bot.get_user(submission.userId)}]({self.bot.get_message(self.bot.get_message(submission.messageId).jump_url)}) ->  ({submission.reactions}) \n"
+            ret_val += f"1. [{self.bot.get_user(submission.userId)}]({self.bot.get_message(submission.messageId).jump_url}) ->  ({submission.reactions}) \n"
         await ctx.reply(ret_val)
     
     @commands.slash_command(name="leaderboard_slash")
@@ -108,7 +108,7 @@ class Seasonal(commands.Cog):
         submissions: list[Submission] = await fetch_submissions(self, inter.guild_id)
         ret_val = ""
         for submission in submissions:
-            ret_val += f"1. [{self.bot.get_user(submission.userId)}]({self.bot.get_message(self.bot.get_message(submission.messageId).jump_url)}) ->  ({submission.reactions}) \n"
+            ret_val += f"1. [{self.bot.get_user(submission.userId)}]({self.bot.get_message(submission.messageId.jump_url)}) ->  ({submission.reactions}) \n"
         await inter.response.send_message(ret_val)
 
 
