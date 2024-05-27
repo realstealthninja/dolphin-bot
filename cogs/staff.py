@@ -1,9 +1,26 @@
 import datetime
 import asyncio
 import disnake
+import traceback
+import textwrap
+import contextlib
+import io
+
 from disnake.ext import commands
 
 from core import DolphinBot
+
+from utils.dutils import Paginator
+
+
+def clean_code(content: str) -> str:
+    if content.startswith("```py"):
+        content = content[5:-3]
+    content = content.strip("`")
+    content = (
+        content.replace("‘", "'").replace("“", '"').replace("”", '"').replace("’", "'")
+    )
+    return content
 
 
 class Staff(commands.Cog):
@@ -78,7 +95,6 @@ class Staff(commands.Cog):
     async def eval(self, ctx: commands.Context, *, code: str = None) -> None:
         if not code:
             return await ctx.send("...")
-
         local_variables = {
             "disnake": disnake,
             "commands": commands,
@@ -125,6 +141,43 @@ class Staff(commands.Cog):
             suffix="```",
         )
         await pager.start(ctx)
+
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx: commands.Context, error):
+        if isinstance(error, commands.CommandNotFound):
+            return
+        elif isinstance(error, commands.CheckFailure):
+            await ctx.send(
+                "It looks like you tried to run a command that you don't have enough \
+                permissions/access to run!"
+            )
+        elif isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.send(f"missing argument `{error.param.name}`")
+        else:
+            await ctx.send(error)
+
+            result = "".join(
+                traceback.format_exception(error, error, error.__traceback__)
+            )
+
+            result = result.replace("`", "")
+            if result.replace("\n", "").endswith("None") and result != "None":
+                result = result[:-5]
+
+            if len(result) < 1991:
+                return await ctx.send(f"```py\nOut[0]: {result}\n```")
+
+            pager = Paginator(
+                timeout=100,
+                entries=[result[i : i + 2000] for i in range(0, len(result), 2000)],
+                length=1,
+                prefix="```py\n",
+                suffix="```",
+            )
+            await pager.start(ctx)
+
+
 
 def setup(bot: DolphinBot):
     bot.add_cog(Staff(bot))
