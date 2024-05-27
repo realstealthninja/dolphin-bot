@@ -92,7 +92,7 @@ class Seasonal(commands.Cog):
             await ctx.reply("No event going on right now sorry!")
             return
 
-        submissions: list[Submission] = fetch_submissions(self, ctx.guild.id)
+        submissions: list[Submission] = await fetch_submissions(self, ctx.guild.id)
         ret_val = ""
         for submission in submissions:
             ret_val += f"1. [{self.bot.get_user(submission.userId)}]({self.bot.get_message(self.bot.get_message(submission.messageId).jump_url)}) ->  ({submission.reactions}) \n"
@@ -105,7 +105,7 @@ class Seasonal(commands.Cog):
             await inter.response.send_message("No event going on right now sorry!")
             return
         
-        submissions: list[Submission] = fetch_submissions(self, inter.guild_id)
+        submissions: list[Submission] = await fetch_submissions(self, inter.guild_id)
         ret_val = ""
         for submission in submissions:
             ret_val += f"1. [{self.bot.get_user(submission.userId)}]({self.bot.get_message(self.bot.get_message(submission.messageId).jump_url)}) ->  ({submission.reactions}) \n"
