@@ -127,11 +127,10 @@ class Seasonal(commands.Cog):
 
         submissions: list[Submission] = await fetch_submissions(self, ctx.guild.id)
 
-        submission_channel = await fetch_config(self, ctx.guild.id).channel
-        
+        submission_channel = await fetch_config(self, ctx.guild.id)       
         ret_val = ""
         for index, submission in enumerate(submissions):
-            message = await self.bot.get_channel(submission_channel).fetch_message(submission.messageId)
+            message = await self.bot.get_channel(submission_channel.channel).fetch_message(submission.messageId)
             ret_val += f"{index + 1}. [{self.bot.get_user(submission.userId)}]({message.jump_url}) ->  ({submission.reactions}) \n"
         await ctx.reply(ret_val)
     
@@ -144,12 +143,11 @@ class Seasonal(commands.Cog):
         
         submissions: list[Submission] = await fetch_submissions(self, inter.guild_id)
 
-        submission_channel = await fetch_config(self, inter.guild.id).channel
-        
+        submission_channel = await fetch_config(self, inter.guild.id)       
         ret_val = ""
 
         for index, submission in enumerate(submissions):
-            message = await self.bot.get_channel(submission_channel).fetch_message(submission.messageId)
+            message = await self.bot.get_channel(submission_channel.channel).fetch_message(submission.messageId)
             ret_val += f"{index + 1}. [{self.bot.get_user(submission.userId)}]({message.jump_url}) ->  ({submission.reactions}) \n"
         await inter.response.send_message(ret_val)
 
