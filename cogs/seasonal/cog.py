@@ -62,7 +62,7 @@ class Seasonal(commands.Cog):
         await ctx.send(file=disnake.File("board.png"))
 
 
-    @commands.slash_command(name="leaderboard")
+    @commands.slash_command(name="leaderboard", description="Shows the seasonal leaderboard")
     async def _leaderboard(self, ctx: disnake.ApplicationCommandInteraction) -> None:
         points: list[Points] = await fetch_points(self, ctx.guild.id)
         users: list[disnake.User] = []
@@ -98,7 +98,7 @@ class Seasonal(commands.Cog):
             ret_val += f"1. [{self.bot.get_user(submission.userId)}]({self.bot.get_message(submission.messageId).jump_url}) ->  ({submission.reactions}) \n"
         await ctx.reply(ret_val)
     
-    @commands.slash_command(name="event leaderboard")
+    @commands.slash_command(name="event leaderboard", description="shows the event leaderboard")
     async def event_leaderboard_slash(self, inter: disnake.ApplicationCommandInteraction):
         event = await fetch_event(self, inter.guild.id)
         if not event:
