@@ -78,8 +78,10 @@ class Seasonal(commands.Cog):
     async def reload_submission(self, ctx: commands.Context, channel: disnake.TextChannel) -> None:
         config = await fetch_config(self, ctx.guild.id)
         event = await fetch_event(self, ctx.guild.id)
+        submissions = await fetch_submissions(self, ctx.guild.id)
 
         msg = await  ctx.send("Reloading submissions:")
+        
 
         async for message in channel.history(after=self.bot.get_message(event.messageId)):
             if message.author.bot:
@@ -91,7 +93,12 @@ class Seasonal(commands.Cog):
             if len(message.attachments) == 0:
                 return
 
+            for submission in submissions:
+                if message.id  == submission.messageId:
+                    return
+
             await message.add_reaction("🔥")
+
             await add_submssion(self, message.guild.id, message.id, message.author.id)
             msg = await msg.edit(msg.content + f"\nadded: {message.author.name}")
             
