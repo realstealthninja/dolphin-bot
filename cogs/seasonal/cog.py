@@ -72,10 +72,6 @@ class Seasonal(commands.Cog):
         await make_leaderboard(users, points)
         await ctx.response.send_message(file=disnake.File("board.png"))
 
-    @commands.command(hidden=True)
-    async def reload_submissions(self, ctx: disnake.commands.Context)  ->  None:
-        pass
-
     @commands.command()
     @commands.check(if_admin)
     async def config(self, ctx: commands.Context) -> None:
