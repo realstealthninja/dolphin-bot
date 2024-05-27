@@ -73,5 +73,58 @@ class Staff(commands.Cog):
                 embed.description += f"**[stderr]**\n{error.decode()}\n"
         await ctx.reply(embed=embed)
 
+
+    @commands.command(aliases=["e"], hidden=True)
+    async def eval(self, ctx: commands.Context, *, code: str = None) -> None:
+        if not code:
+            return await ctx.send("...")
+
+        local_variables = {
+            "disnake": disnake,
+            "commands": commands,
+            "bot": ctx.bot,
+            "client": ctx.bot,
+            "ctx": ctx,
+            "channel": ctx.channel,
+            "author": ctx.author,
+            "guild": ctx.guild,
+            "message": ctx.message,
+        }
+
+        code = clean_code(code)
+        stdout = io.StringIO()
+
+        pref = await self.bot.get_prefix(ctx.message)
+        message = clean_code(ctx.message.content[len(pref) - 1 :])
+
+        try:
+            with contextlib.redirect_stdout(stdout):
+                exec(
+                    f"async def func():\n{textwrap.indent(code, '    ')}",
+                    local_variables,
+                )
+                obj = await local_variables["func"]()
+
+                result = f"{stdout.getvalue()}{obj}\n"
+        except Exception as e:
+            result = "".join(traceback.format_exception(e, e, e.__traceback__))
+
+        result = result.replace("`", "")
+        message = message.replace("`", "")
+        if result.replace("\n", "").endswith("None") and result != "None":
+            result = result[:-5]
+
+        if len(result) < 2000:
+            return await ctx.send(f"```py\nIn[0]: {message}\nOut[0]: {result}\n```")
+
+        pager = Paginator(
+            timeout=100,
+            entries=[result[i : i + 2000] for i in range(0, len(result), 2000)],
+            length=1,
+            prefix="```py\n",
+            suffix="```",
+        )
+        await pager.start(ctx)
+
 def setup(bot: DolphinBot):
     bot.add_cog(Staff(bot))
