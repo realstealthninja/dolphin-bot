@@ -72,6 +72,10 @@ class Seasonal(commands.Cog):
         await make_leaderboard(users, points)
         await ctx.response.send_message(file=disnake.File("board.png"))
 
+    @commands.command(hidden=True)
+    async def reload_submissions(self, ctx: disnake.commands.Context)  ->  None:
+        pass
+
     @commands.command()
     @commands.check(if_admin)
     async def config(self, ctx: commands.Context) -> None:
@@ -94,6 +98,7 @@ class Seasonal(commands.Cog):
 
         submissions: list[Submission] = await fetch_submissions(self, ctx.guild.id)
         ret_val = ""
+        await ctx.send(submissions)
         for submission in submissions:
             ret_val += f"1. [{self.bot.get_user(submission.userId)}]({self.bot.get_message(submission.messageId).jump_url}) ->  ({submission.reactions}) \n"
         await ctx.reply(ret_val)
