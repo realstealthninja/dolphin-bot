@@ -102,7 +102,7 @@ class Seasonal(commands.Cog):
 
         for message in sub_messages:
             for reaction in message.reactions:
-                if reaction != "🔥":
+                if reaction.emoji != "🔥":
                     continue
 
                 for user in reaction.users():
@@ -315,16 +315,18 @@ class Seasonal(commands.Cog):
             msg = self.bot.get_message(submission.messageId)
 
             # check if the reaction was to a submission
-            if submission.messageId == reaction.message.id:
-                # check if the reactor was the creator
-                if submission.userId == user.id:
-                    return
+            if submission.messageId != reaction.message.id:
+                return
+
+            # check if the reactor was the creator
+            if submission.userId == user.id:
+                return
                 
-                for ereaction in msg.reactions:
-                    if ereaction == reaction:
-                        #  if  we find the reaction add it to the db
-                        await add_reaction(self, msg.id)
-                        break
+            for ereaction in msg.reactions:
+                if ereaction == reaction:
+                     #  if  we find the reaction add it to the db
+                     await add_reaction(self, msg.id)
+                     break
 
             # check  for the other messages to see if the reactor has already reacted 
             for ereaction in msg.reactions:
