@@ -102,7 +102,7 @@ class Seasonal(commands.Cog):
 
         for message in sub_messages:
             for reaction in message.reactions:
-                if reaction != "🔥":
+                if reaction.emoji != "🔥":
                     continue
 
                 for user in reaction.users():
