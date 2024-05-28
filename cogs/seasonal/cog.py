@@ -21,7 +21,8 @@ from .utils import (
     fetch_season,
     fetch_submissions,
     remove_reaction,
-    make_leaderboard
+    make_leaderboard,
+    to_zero
 )
 
 
@@ -83,7 +84,7 @@ class Seasonal(commands.Cog):
         if not event or not config or not submissions:
             return
 
-        channel = await self.bot.get_channel(config.channel)
+        channel = self.bot.get_channel(config.channel)
 
         sub_messages: list[disnake.Message] = []
         event_message = await channel.fetch_message(event.messageId)
@@ -114,10 +115,13 @@ class Seasonal(commands.Cog):
         await sent_message.edit(embed=embed)
         users_reacted = []       
         user_str = []
-        for message, users in reactors.items:
+        for message, users in reactors.items():
             for user in users:
                 if user in users_reacted:
-                    message.reactions["🔥"].remove(user)
+                    for reaction in message.reactions:
+                        if reaction.emoji != "🔥":
+                            continue
+                        reaction.remove(user) 
                     remove_reaction(self, message.id)
                     
                     embed.set_field_at(0, "users who've already reacted!", value="\n".join(user_str))
@@ -126,8 +130,28 @@ class Seasonal(commands.Cog):
                     users_reacted.append(user)
                     user_str.append(user.name)
 
+        submissions = await fetch_submissions(self, ctx.guild.id)
+        for submission in submissions:
+            if submission.reactions < 0:
+                await ctx.send("negative reactions found clearing all reactions and reseting reactions back to zero!")
+                await to_zero(self, submission.messageId)
+                for message in reactors.keys():
+                    for reaction in  message.reactions:
+                        if reaction.emoji != "🔥":
+                            continue
+
+                        for user in reaction.users():
+                            if not user.bot:
+                                await reaction.remove(user)
+                        
+                break
+                
+                    
+                
+
         await ctx.send("For the information of these users, Your respective reactions have been removed if you've already reacted\
-        \n if you'd like feel free to re add your reaction to your favorite submission!")
+        \n if you'd like feel free to re add your reaction to your favorite submission! \n any and all negative points have been reverted back to zero!")
+        
 
 
     @commands.command(hidden=True)

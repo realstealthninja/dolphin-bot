@@ -1,6 +1,6 @@
 from .objects import Events, Configs, Points, Season, Submission
 
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, update
 
 import disnake
 
@@ -29,6 +29,10 @@ async def add_event(cog, date, id, msgId):
             season.month += 1
         await conn.commit()
 
+async def to_zero(cog, msgid) -> None:
+    async with cog.session() as conn:
+        await conn.execute(update(Submission).where(Submission.reactions < 0).values(reactions = 0))
+        await conn.commit()
 
 async def fetch_config(cog, id) -> Configs | None:
     async with cog.session() as conn:
