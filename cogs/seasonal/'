@@ -110,24 +110,18 @@ class Seasonal(commands.Cog):
 
                     reactors[message] += user
 
-        embed.add_field(name="users who've already reacted!", value=" ")
-        await sent_message.edit(embed=embed)
         users_reacted = []       
-        user_str = []
         for message, users in reactors.items:
             for user in users:
                 if user in users_reacted:
-                    message.reactions["🔥"].remove(user)
-                    remove_reaction(self, message.id)
                     
-                    embed.set_field_at(0, "users who've already reacted!", value="\n".join(user_str))
-                    await sent_message.edit(embed=embed)
+                    message.reactions["🔥"].remove(user)
                 else:
                     users_reacted.append(user)
-                    user_str.append(user.name)
 
-        await ctx.send("For the information of these users, Your respective reactions have been removed if you've already reacted\
-        \n if you'd like feel free to re add your reaction to your favorite submission!")
+
+
+
 
 
     @commands.command(hidden=True)
