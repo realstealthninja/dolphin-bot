@@ -144,10 +144,6 @@ class Seasonal(commands.Cog):
                             if not user.bot:
                                 await reaction.remove(user)
                         
-                break
-                
-                    
-                
 
         await ctx.send("For the information of these users, Your respective reactions have been removed if you've already reacted\
         \n if you'd like feel free to re add your reaction to your favorite submission! \n any and all negative points have been reverted back to zero!")
@@ -207,6 +203,9 @@ class Seasonal(commands.Cog):
             return
 
         submissions: list[Submission] = await fetch_submissions(self, ctx.guild.id)
+
+
+        submissions = sorted(submissions, key=lambda x: x.reactions)
 
         submission_channel = await fetch_config(self, ctx.guild.id)       
         ret_val = ""
