@@ -205,7 +205,7 @@ class Seasonal(commands.Cog):
         submissions: list[Submission] = await fetch_submissions(self, ctx.guild.id)
 
 
-        submissions = sorted(submissions, key=lambda x: x.reactions)
+        submissions = sorted(submissions, key=lambda x: x.reactions, reverse=True)
 
         submission_channel = await fetch_config(self, ctx.guild.id)       
         ret_val = ""
