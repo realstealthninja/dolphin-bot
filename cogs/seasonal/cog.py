@@ -205,6 +205,7 @@ class Seasonal(commands.Cog):
         for index, submission in enumerate(submissions):
             ret_val += f"#{index + 1}: {self.bot.get_user(submission.userId).display_name} with {submission.reactions} points \n"
         ret_val += "\n```"
+        return ret_val
     
 
     @commands.command()
