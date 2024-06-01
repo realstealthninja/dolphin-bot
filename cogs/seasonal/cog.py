@@ -194,7 +194,19 @@ class Seasonal(commands.Cog):
             ),
             view=view,
         )
+
+    async def fetch_event_leaderboard(self, guild_id) -> str:
+        submissions: list[Submission] = await fetch_submissions(self, guild_id)
+
+
+        submissions = sorted(submissions, key=lambda x: x.reactions, reverse=True)
+
+        ret_val = "```"
+        for index, submission in enumerate(submissions):
+            ret_val += f"#{index + 1}: {self.bot.get_user(submission.userId).display_name} with {submission.reactions} points \n"
+        ret_val += "\n```"
     
+
     @commands.command()
     async def event_leaderboard(self, ctx: commands.Context):
         event = await fetch_event(self, ctx.guild.id)
@@ -202,14 +214,7 @@ class Seasonal(commands.Cog):
             await ctx.reply("No event going on right now sorry!")
             return
 
-        submissions: list[Submission] = await fetch_submissions(self, ctx.guild.id)
-
-
-        submissions = sorted(submissions, key=lambda x: x.reactions, reverse=True)
-        ret_val = "```"
-        for index, submission in enumerate(submissions):
-            ret_val += f"#{index + 1} {self.bot.get_user(submission.userId).display_name} with {submission.reactions} points \n"
-        ret_val += "\n```"
+        ret_val = await self.fetch_event_leaderboard(ctx.guild.id)
         await ctx.reply(ret_val)
     
     @commands.slash_command(name="event_leaderboard", description="shows the event leaderboard")
@@ -218,14 +223,8 @@ class Seasonal(commands.Cog):
         if not event:
             await inter.response.send_message("No event going on right now sorry!")
             return
- 
-        submissions: list[Submission] = await fetch_submissions(self, inter.guild.id)
 
-        submissions = sorted(submissions, key=lambda x: x.reactions, reverse=True)
-        ret_val = "```"
-        for index, submission in enumerate(submissions):
-            ret_val += f"#{index + 1}: {self.bot.get_user(submission.userId).display_name} with {submission.reactions} points \n"
-        ret_val += "\n```"       
+        ret_val = await self.fetch_event_leaderboard(inter.guild.id)
         await inter.response.send_message(ret_val)
 
 
