@@ -206,12 +206,10 @@ class Seasonal(commands.Cog):
 
 
         submissions = sorted(submissions, key=lambda x: x.reactions, reverse=True)
-
-        submission_channel = await fetch_config(self, ctx.guild.id)       
-        ret_val = ""
+        ret_val = "```"
         for index, submission in enumerate(submissions):
-            message = await self.bot.get_channel(submission_channel.channel).fetch_message(submission.messageId)
-            ret_val += f"{index + 1}. [{self.bot.get_user(submission.userId)}]({message.jump_url}) ->  ({submission.reactions}) \n"
+            ret_val += f"#{index + 1} {self.bot.get_user(submission.userId)} with {submission.reactions} points \n"
+        ret_val += "\n```"
         await ctx.reply(ret_val)
     
     @commands.slash_command(name="event_leaderboard", description="shows the event leaderboard")
@@ -220,15 +218,14 @@ class Seasonal(commands.Cog):
         if not event:
             await inter.response.send_message("No event going on right now sorry!")
             return
-        
-        submissions: list[Submission] = await fetch_submissions(self, inter.guild_id)
+ 
+        submissions: list[Submission] = await fetch_submissions(self, inter.guild.id)
 
-        submission_channel = await fetch_config(self, inter.guild.id)       
-        ret_val = ""
-
+        submissions = sorted(submissions, key=lambda x: x.reactions, reverse=True)
+        ret_val = "```"
         for index, submission in enumerate(submissions):
-            message = await self.bot.get_channel(submission_channel.channel).fetch_message(submission.messageId)
-            ret_val += f"{index + 1}. [{self.bot.get_user(submission.userId)}]({message.jump_url}) ->  ({submission.reactions}) \n"
+            ret_val += f"#{index + 1} {self.bot.get_user(submission.userId)} with {submission.reactions} points \n"
+        ret_val += "\n```"       
         await inter.response.send_message(ret_val)
 
 
