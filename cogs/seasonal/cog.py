@@ -208,7 +208,7 @@ class Seasonal(commands.Cog):
         submissions = sorted(submissions, key=lambda x: x.reactions, reverse=True)
         ret_val = "```"
         for index, submission in enumerate(submissions):
-            ret_val += f"#{index + 1} {self.bot.get_user(submission.userId)} with {submission.reactions} points \n"
+            ret_val += f"#{index + 1} {self.bot.get_user(submission.userId).display_name} with {submission.reactions} points \n"
         ret_val += "\n```"
         await ctx.reply(ret_val)
     
@@ -224,7 +224,7 @@ class Seasonal(commands.Cog):
         submissions = sorted(submissions, key=lambda x: x.reactions, reverse=True)
         ret_val = "```"
         for index, submission in enumerate(submissions):
-            ret_val += f"#{index + 1} {self.bot.get_user(submission.userId)} with {submission.reactions} points \n"
+            ret_val += f"#{index + 1}: {self.bot.get_user(submission.userId).display_name} with {submission.reactions} points \n"
         ret_val += "\n```"       
         await inter.response.send_message(ret_val)
 
