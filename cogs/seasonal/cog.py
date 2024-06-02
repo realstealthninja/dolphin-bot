@@ -206,8 +206,9 @@ class Seasonal(commands.Cog):
         for index, submission in enumerate(submissions):
             if last_sub and last_sub.reactions == submission.reactions:
                 prev_user = self.bot.get_user(last_sub.userId).display_name
-                ret_val[index].replace(prev_user, f"{prev_user}, {self.bot.get_user(submission.userId).display_name}")
+                ret_val[index-1].replace(prev_user, f"{prev_user}, {self.bot.get_user(submission.userId).display_name}")
                 last_sub = submission
+                index -= 1
                 continue
 
             ret_val.append(f"#{index + 1}: {self.bot.get_user(submission.userId).display_name} with {submission.reactions} points")
