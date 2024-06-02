@@ -204,7 +204,7 @@ class Seasonal(commands.Cog):
         ret_val = ["```"]
         last_sub = None
         for index, submission in enumerate(submissions):
-            if last_sub.reactions == submission.reactions:
+            if last_sub and last_sub.reactions == submission.reactions:
                 prev_user = self.bot.get_user(last_sub.userId).display_name
                 ret_val[index].replace(prev_user, f"{prev_user}, {self.bot.get_user(submission.userId).display_name}")
                 last_sub = submission
