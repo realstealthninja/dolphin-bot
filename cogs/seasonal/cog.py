@@ -210,10 +210,10 @@ class Seasonal(commands.Cog):
                 last_sub = submission
                 continue
 
-            ret_val.append(f"#{index + 1}: {self.bot.get_user(submission.userId).display_name} with {submission.reactions} points \n")
+            ret_val.append(f"#{index + 1}: {self.bot.get_user(submission.userId).display_name} with {submission.reactions} points")
             last_sub = submission
-        ret_val.append("\n```")
-        return ret_val
+        ret_val.append("```")
+        return "\n".join(ret_val)
     
 
     @commands.command()
