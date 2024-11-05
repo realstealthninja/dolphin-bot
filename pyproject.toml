@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "A simple bot for keeping track of beats to beat"
 authors = ["realstealthninja <realstealthninja@gmail.com>"]
 license = "MIT"
+package-mode = false
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -16,6 +17,7 @@ python-dateutil = "^2.9.0.post0"
 spotify = "^0.10.2"
 pillow = "^10.2.0"
 opencv-python = "^4.9.0.80"
+setuptools = "^75.3.0"
 
 [tool.black]
 line-length = 79
