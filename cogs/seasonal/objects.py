@@ -19,7 +19,7 @@ class Season(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     start_date: Mapped[date]
     end_date: Mapped[date]
-    events: Mapped[List["Event"]] = relationship()
+    events: Mapped[List["Event"]] = relationship(back_populates="season")
 
 
 class Event(Base):
@@ -29,8 +29,8 @@ class Event(Base):
     start_date: Mapped[date]
     end_date: Mapped[date]
 
-    season: Mapped[Season] = relationship()
-    submissions: Mapped[List["Submission"]] = relationship()
+    season: Mapped[Season] = relationship(back_populates="events")
+    submissions: Mapped[List["Submission"]] = relationship(back_populates="event")
 
 
 class Producer(Base):
@@ -39,7 +39,7 @@ class Producer(Base):
     points: Mapped[int] = mapped_column(default=0)
     wins: Mapped[int] = mapped_column(default=0)
     
-    submissions: Mapped[List["Submission"]] = relationship()
+    submissions: Mapped[List["Submission"]] = relationship(back_populates="producer")
 
 
 class Submission(Base):
@@ -48,9 +48,9 @@ class Submission(Base):
     producer_id: Mapped[int] = mapped_column(ForeignKey("producers.id"))
     event_id: Mapped[int] = mapped_column(ForeignKey("events.id"))
 
-    reactions: Mapped[List["Reaction"]] = relationship()
-    event: Mapped[Event] = relationship()
-    producer: Mapped[Producer] = relationship()
+    reactions: Mapped[List["Reaction"]] = relationship(back_populates="submission")
+    event: Mapped[Event] = relationship(back_populates="submissions")
+    producer: Mapped[Producer] = relationship(back_populates="submissions")
 
 
 class Reaction(Base):
@@ -58,5 +58,5 @@ class Reaction(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     submission_id: Mapped[int] = mapped_column(ForeignKey("submissions.id"))
 
-    submission: Mapped[Submission] = relationship()
+    submission: Mapped[Submission] = relationship(back_populates="reactions")
 
