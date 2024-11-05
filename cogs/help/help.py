@@ -32,7 +32,7 @@ class HelpCommand(commands.HelpCommand):
             disnake.Embed(timestamp=datetime.now())
             .set_author(name="Help", icon_url=self.context.author.avatar)
             .add_field(
-                name="\> Name <",
+                name="> Name <",
                 value=f"`{command.qualified_name}`",
                 inline=False,
             )
@@ -40,17 +40,17 @@ class HelpCommand(commands.HelpCommand):
         if command.aliases:
             command.aliases = ", ".join(command.aliases)
             embed.add_field(
-                name="\> Aliases <", value=f"`{command.aliases}`", inline=False
+                name="\\> Aliases <", value=f"`{command.aliases}`", inline=False
             )
             embed.add_field(
-                name="\> usage <",
-                value=f"`db/{command.name + command.signature}\`"
+                name="\\> usage <",
+                value=f"`db/{command.name + command.signature}\\`"
                 if command.signature
-                else f"`db/{command.name}\`",
+                else f"`db/{command.name}\\`",
                 inline=False,
             )
         embed.add_field(
-            name="\> Description <",
+            name="\\> Description <",
             value=f"{command.description}",
             inline=False,
         )
