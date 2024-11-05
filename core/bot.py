@@ -1,8 +1,6 @@
 #sys
 import os
 import asyncio
-from datetime import datetime
-
 
 # constants
 from .constants import BOT_TOKEN
@@ -35,7 +33,8 @@ class DolphinBot(Bot):
             case_insensitive=True,
             help_command=None,
             command_sync_flags=command_sync_flags,
-            owner_ids=[521226389559443461, 298043305927639041],
+            test_guilds=[1219410384960749648,],
+            owner_ids= set([521226389559443461, 298043305927639041]),
         )
         self.COGS: list = list()
         self.seasonal: AsyncEngine | None = None
@@ -78,6 +77,7 @@ class DolphinBot(Bot):
         if ctx.author.id == 672824404702527509:
             await ctx.send("pls use the new slash commands :3")
             return False
+        return True
         
 
     async def connect_engines(self):
