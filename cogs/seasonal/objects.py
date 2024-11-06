@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import (
         Mapped,
         DeclarativeBase,
+        mapped_collection,
         mapped_column,
         relationship
 )
@@ -59,4 +60,5 @@ class Reaction(Base):
     submission_id: Mapped[int] = mapped_column(ForeignKey("submissions.id"))
 
     submission: Mapped[Submission] = relationship(back_populates="reactions")
+
 
