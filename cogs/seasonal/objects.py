@@ -71,6 +71,7 @@ class Submission(Base):
     reactions: Mapped[List["Reaction"]] = relationship(back_populates="submission")
     event: Mapped[Event] = relationship(back_populates="submissions")
     producer: Mapped[Producer] = relationship(back_populates="submissions")
+    song: Mapped[Song] = relationship(back_populates="songs.sub_id")
 
 
 class Reaction(Base):
