@@ -14,7 +14,7 @@ from disnake.interactions import AppCommandInteraction
 from core.bot import DolphinBot
 from .objects import Base, Season, Event, Submission, Producer, Sample
 
-from sqlalchemy.ext.asyncio import async_sessionmaker
+from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 from sqlalchemy import select
 
 
@@ -33,6 +33,28 @@ class Seasonal(commands.Cog):
         async with self.bot.seasonal.begin() as connection:
             await connection.run_sync(Base.metadata.create_all)
 
+    async def get_current_season(
+            self,
+            session: AsyncSession
+    ) -> Season | None:
+        return (await session.execute(
+                select(Season).filter(date.today() < Season.end_date)
+         )).scalar_one_or_none()
+
+    async def get_current_event(
+            self,
+            session: AsyncSession,
+            season: Season,
+            ) -> Event | None:
+        return (
+                await session.execute(
+                    select(Event).filter(
+                        Event.season ==  season and
+                        date.today() < Event.end_date 
+                    )
+                )
+            ).scalar_one_or_none()
+
 
     @commands.slash_command()
     async def season(
@@ -43,10 +65,7 @@ class Seasonal(commands.Cog):
         ) -> None:
         """Creates a season. the date is specified in mm/dd/yy format"""
         async with self.session() as session:
-            season = (await session.execute(
-                    select(Season).filter(date.today() < Season.end_date)
-            )).scalar_one_or_none()
-
+            season = await self.get_current_season(session)
             start = datetime.strptime(start_date, "%m/%d/%y")
             end = datetime.strptime(end_date, "%m/%d/%y")
             
@@ -57,6 +76,7 @@ class Seasonal(commands.Cog):
 
             session.add(season)
             await session.commit()
+
         await ctx.send(
             embed = Embed(
                 title = "Season has been made",
@@ -84,9 +104,7 @@ class Seasonal(commands.Cog):
         """
         async with self.session() as session:
             
-            season = (await session.execute(
-                    select(Season).filter(date.today() < Season.end_date)
-            )).scalar_one_or_none()
+            season = await self.get_current_season(session) 
 
             if not season:
                 await ctx.send(
@@ -94,12 +112,7 @@ class Seasonal(commands.Cog):
                 )
                 return None
 
-            event: Event | None = (
-                await session.execute(
-                    select(Event).filter_by(season = season)
-                )
-            ).scalar_one_or_none()
-
+            event: Event | None = await self.get_current_event(session, season)
             start = datetime.strptime(start_date, "%m/%d/%y")
             end = datetime.strptime(end_date, "%m/%d/%y")
 
@@ -163,14 +176,33 @@ class Seasonal(commands.Cog):
             return
         
         async with self.session() as session:
+            season = await self.get_current_season(session)
+
+            if not season:
+                await msg.delete()
+                return
+
             producer = (await session.execute(
                 select(Producer).filter_by(id = msg.author.id)
             )).scalar_one_or_none()
+
+            if not producer:
+                producer = Producer(id = msg.author.id)
+                session.add(producer)
 
             submission = (await session.execute(
                 select(Submission).filter_by(producer = producer)
             )).scalar_one_or_none()
 
+            event = await self.get_current_event(session, season)
+
+            if not event:
+                await msg.delete()
+                return
+
+            if not submission:
+                msg = await self.submission_channel.send("")
+                submission = Submission(id = msg.id, producer = producer, event = event)
 
 
 
