@@ -3,16 +3,18 @@ from disnake import (
     Message,
     NotFound,
     Attachment,
+    ButtonStyle,
     TextChannel,
     ApplicationCommandInteraction
 )
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
+from disnake.ui import Button
 from disnake.ext import commands
 from disnake.interactions import AppCommandInteraction 
 
 from core.bot import DolphinBot
-from .objects import Base, Season, Event, Submission, Producer, Sample
+from .objects import Base, Season, Song, Event, Submission, Producer, Sample
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 from sqlalchemy import select
@@ -103,6 +105,7 @@ class Seasonal(commands.Cog):
         dates are specified in mm/dd/yy format\n
         """
         async with self.session() as session:
+            await ctx.response.defer()
             
             season = await self.get_current_season(session) 
 
@@ -171,17 +174,25 @@ class Seasonal(commands.Cog):
             await msg.delete()
             return
 
+        if msg.author == self.bot.user:
+            return
+
         if len(msg.attachments) < 0: 
             await msg.author.send("Please use <#1244043434281402582> for chatting")           
             return
         
+
+        if len(msg.attachments) > 1: 
+            await msg.author.send("Please submit only one song")           
+            return
+
         async with self.session() as session:
             season = await self.get_current_season(session)
 
             if not season:
                 await msg.delete()
                 return
-
+            
             producer = (await session.execute(
                 select(Producer).filter_by(id = msg.author.id)
             )).scalar_one_or_none()
@@ -201,8 +212,43 @@ class Seasonal(commands.Cog):
                 return
 
             if not submission:
-                msg = await self.submission_channel.send("")
-                submission = Submission(id = msg.id, producer = producer, event = event)
+                _msg = await self.submission_channel.send(
+                    embed=Embed(
+                        title = msg.attachments[0].filename[:-3],
+                        description=msg.content
+                    ).add_field(
+                        name = "Votes",
+                        value = "0"
+                    ),
+
+                    components=[
+                        Button(
+                            label="🔥",
+                            style=ButtonStyle.success,
+                            custom_id="vote"
+                        )
+                    ],
+
+                    file=(await msg.attachments[0].to_file())
+                )
+
+                submission = Submission(id = _msg.id, producer = producer, event = event)
+                session.add(submission)
+
+            song = (await session.execute(
+                select(Song).filter_by(submission = submission)
+            )).scalar_one_or_none()
+
+            if not song:
+                song = Song(submission = submission,
+                            name = msg.attachments[0].filename[:-4],
+                            file = (await msg.attachments[0].read())
+                )
+                session.add(song)
+            
+            await msg.delete()
+
+            await session.commit()
 
 
 
