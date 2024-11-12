@@ -45,14 +45,6 @@ class Sample(Base):
 
     event: Mapped[Event] = relationship(back_populates="samples") 
 
-class Song(Base):
-    __tablename__ = "songs"
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    sub_id: Mapped[int] = mapped_column(ForeignKey("submissions.id"))
-    name: Mapped[str]
-    file: Mapped[bytes]
-
-
 class Producer(Base):
     __tablename__ = "producers"
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -60,6 +52,16 @@ class Producer(Base):
     wins: Mapped[int] = mapped_column(default=0)
     
     submissions: Mapped[List["Submission"]] = relationship(back_populates="producer")
+
+
+class Song(Base):
+    __tablename__ = "songs"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    sub_id: Mapped[int] = mapped_column(ForeignKey("submissions.id"))
+    name: Mapped[str | None]
+    file: Mapped[bytes | None]
+
+    submission: Mapped["Submission"] = relationship(back_populates="song")
 
 
 class Submission(Base):
@@ -71,7 +73,8 @@ class Submission(Base):
     reactions: Mapped[List["Reaction"]] = relationship(back_populates="submission")
     event: Mapped[Event] = relationship(back_populates="submissions")
     producer: Mapped[Producer] = relationship(back_populates="submissions")
-    song: Mapped[Song] = relationship(back_populates="songs.sub_id")
+
+    song: Mapped["Song"] = relationship(back_populates="submission")
 
 
 class Reaction(Base):
